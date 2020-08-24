@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+// Components
+import Popular from './components/popular';
+
 // Component: 
 // State
 // Lifecycle
@@ -10,7 +13,9 @@ import './index.css';
  class App extends React.Component {
       render(){
             return (
-                  <div>Hello World!</div> // Every time you use JSX, React uses the React.createElement(). This means that JSX takes HTML looking code into React create Element. This is done with Babel. Takes JSX and turns it into vanilla react code. 
+                  <div className='container'>
+                        <Popular />
+                  </div>
             )
       }
  }
