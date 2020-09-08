@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types'; // npm install prop-types
+import { fetchPopularRepos } from '../utils/api'
 
 // Functional Component
 function LanguagesNav( {selected, onUpdateLanguage} ){ // destructuring the props
@@ -43,22 +44,49 @@ export default class Popular extends React.Component {
 
     // Add state
     this.state = {
-      selectedLanguage: 'All' // default
+      selectedLanguage: 'All', // default
+      repos: null,
+      error: null
     }
 
     this.updateLanguage = this.updateLanguage.bind(this);
+    this.isLoading = this.isLoading.bind(this);
 
+  }
+
+  componentDidMount(){
+    this.updateLanguage(this.state.selectedLanguage);
   }
 
   updateLanguage(selectedLanguage){
     this.setState({
-      selectedLanguage: selectedLanguage
-    })
+      selectedLanguage: selectedLanguage,
+      error: null,
+      repos: null
+    });
+
+    fetchPopularRepos(selectedLanguage)
+    .then( repos => this.setState({
+      repos: repos,
+      error: null
+    }))
+    .catch( () => {
+      console.warn('ERROR fetchign repos', error);
+
+      this.setState({
+        error: `There was ana error fetching the repositories`  
+      });
+
+    });
+  }
+
+  isLoading(){
+    return this.state.repos === null && this.state.error === null;
   }
 
   render(){
 
-    let { selectedLanguage } = this.state;
+    let { selectedLanguage, repos, error } = this.state;
 
     return (
       <React.Fragment>
@@ -66,6 +94,13 @@ export default class Popular extends React.Component {
           selected = {selectedLanguage}
           onUpdateLanguage = {this.updateLanguage}
         />
+
+        {this.isLoading() && <p>Loading</p> /* if this is loading, show the p loading */}
+
+        {error && <p>{ error }</p>}
+
+        {repos && <pre>{ JSON.stringify(repos, null, 2) }</pre>}
+
       </React.Fragment>
     )
   }
